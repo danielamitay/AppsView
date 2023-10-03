@@ -1,5 +1,5 @@
 //
-//  SwiftUIView.swift
+//  LoadedView.swift
 //  AppsView
 //
 //  Created by Daniel Amitay on 10/2/23.
@@ -8,7 +8,7 @@
 import SwiftUI
 
 internal struct LoadedView: View {
-    let apps: [String]
+    let apps: [App]
 
     var body: some View {
         if apps.isEmpty {
@@ -16,7 +16,7 @@ internal struct LoadedView: View {
                 .font(.system(size: 28, weight: .bold))
                 .navigationTitle("Results")
         } else {
-            List(apps, id: \.self) { app in
+            List(apps, id: \.trackId) { app in
                 AppRow(app: app)
             }
             .navigationTitle("Results")
@@ -26,6 +26,6 @@ internal struct LoadedView: View {
 
 #Preview {
     NavigationView {
-        LoadedView(apps: ["One", "Two", "Three"])
+        LoadedView(apps: [])
     }
 }

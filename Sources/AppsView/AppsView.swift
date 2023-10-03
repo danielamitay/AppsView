@@ -9,7 +9,7 @@ import SwiftUI
 
 public struct AppsView: View {
     public var body: some View {
-        LoadedView(apps: ["One", "Two", "Three"])
+        LoadedView(apps: [])
     }
 }
 

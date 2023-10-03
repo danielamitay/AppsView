@@ -1,5 +1,5 @@
 //
-//  SwiftUIView.swift
+//  ErrorView.swift
 //  AppsView
 //
 //  Created by Daniel Amitay on 10/2/23.
