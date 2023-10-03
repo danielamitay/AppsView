@@ -30,7 +30,7 @@ internal struct AppRow: View {
                     }
                 }
                 RoundedRectangle(cornerRadius: 11)
-                    .stroke(Color.init(uiColor: .init(white: 0.5, alpha: 0.1)), lineWidth: 1)
+                    .stroke(Color(uiColor: .init(white: 0.5, alpha: 0.1)), lineWidth: 1)
 
             }
             .frame(width: 64, height: 64)
@@ -68,8 +68,8 @@ internal struct AppRow: View {
 #Preview {
     NavigationView {
         List {
-            AppRow(app: App(trackId: 533886215, trackName: "iTrackMail - Email Tracking", genres: ["Productivity"], artworkUrl512: "https://is1-ssl.mzstatic.com/image/thumb/Purple116/v4/f5/dd/b8/f5ddb85d-79e1-111c-a8a3-874a16963f08/AppIcon-0-0-1x_U007emarketing-0-6-0-85-220.png/512x512bb.jpg", formattedPrice: "Free"))
-            AppRow(app: App(trackId: 374351996, trackName: "WiFi Camera - Remote iPhones", genres: ["Photo & Video"], artworkUrl512: "https://is1-ssl.mzstatic.com/image/thumb/Purple113/v4/81/a0/20/81a02039-0da9-1c74-7d1e-1b319fb9d1a0/AppIcon-0-0-1x_U007emarketing-0-0-0-6-0-85-220.png/512x512bb.jpg", formattedPrice: "$1.99"))
+            AppRow(app: .iTrackMail)
+            AppRow(app: .WifiCamera)
         }
         .navigationTitle("Apps")
         .listStyle(.plain)

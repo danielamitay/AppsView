@@ -21,34 +21,30 @@ internal struct App {
     let minimumOsVersion: String?
     let artworkUrl100: String?
     let artworkUrl512: String?
-    let averageUserRating: Float?
-    let userRatingCount: Int?
 }
 
-// MARK: Helper initializer
-internal extension App {
-    init(trackId: Int, trackName: String, genres: [String], artworkUrl512: String?, formattedPrice: String? = nil) {
+// MARK: Helper initializers
+extension App {
+    init(software: iTunesAPI.SoftwareDto) {
         self.init(
-            trackId: trackId,
-            trackName: trackName,
-            genres: genres,
-            artistId: nil,
-            bundleId: nil,
-            formattedPrice: formattedPrice,
-            screenshotUrls: nil,
-            ipadScreenshotUrls: nil,
-            features: nil,
-            minimumOsVersion: nil,
-            artworkUrl100: nil,
-            artworkUrl512: artworkUrl512,
-            averageUserRating: nil,
-            userRatingCount: nil
+            trackId: software.trackId,
+            trackName: software.trackName,
+            genres: software.genres,
+            artistId: software.artistId,
+            bundleId: software.bundleId,
+            formattedPrice: software.formattedPrice,
+            screenshotUrls: software.screenshotUrls,
+            ipadScreenshotUrls: software.ipadScreenshotUrls,
+            features: software.features,
+            minimumOsVersion: software.minimumOsVersion,
+            artworkUrl100: software.artworkUrl100,
+            artworkUrl512: software.artworkUrl512
         )
     }
 }
 
 // MARK: Helper methods
-internal extension App {
+extension App {
     var isCompatible: Bool {
         let systemVersion = UIDevice.current.systemVersion
         if let minimumOsVersion, minimumOsVersion.compare(systemVersion, options: .numeric) != .orderedDescending {
@@ -72,7 +68,6 @@ internal extension App {
         }
         return false
     }
-
     var iconURL: URL? {
         if let artworkUrl512 {
             return URL(string: artworkUrl512)
@@ -83,3 +78,31 @@ internal extension App {
         return nil
     }
 }
+
+#if DEBUG
+// MARK: Convenience initializers for #Previews
+extension App {
+    static var iTrackMail: App {
+        App(trackId: 533886215, trackName: "iTrackMail - Email Tracking", genres: ["Productivity"], artworkUrl512: "https://is1-ssl.mzstatic.com/image/thumb/Purple116/v4/f5/dd/b8/f5ddb85d-79e1-111c-a8a3-874a16963f08/AppIcon-0-0-1x_U007emarketing-0-6-0-85-220.png/512x512bb.jpg", formattedPrice: "Free")
+    }
+    static var WifiCamera: App {
+        App(trackId: 374351996, trackName: "WiFi Camera - Remote iPhones", genres: ["Photo & Video"], artworkUrl512: "https://is1-ssl.mzstatic.com/image/thumb/Purple113/v4/81/a0/20/81a02039-0da9-1c74-7d1e-1b319fb9d1a0/AppIcon-0-0-1x_U007emarketing-0-0-0-6-0-85-220.png/512x512bb.jpg", formattedPrice: "$1.99")
+    }
+    init(trackId: Int, trackName: String, genres: [String], artworkUrl512: String?, formattedPrice: String? = nil) {
+        self.init(
+            trackId: trackId,
+            trackName: trackName,
+            genres: genres,
+            artistId: nil,
+            bundleId: nil,
+            formattedPrice: formattedPrice,
+            screenshotUrls: nil,
+            ipadScreenshotUrls: nil,
+            features: nil,
+            minimumOsVersion: nil,
+            artworkUrl100: nil,
+            artworkUrl512: artworkUrl512
+        )
+    }
+}
+#endif

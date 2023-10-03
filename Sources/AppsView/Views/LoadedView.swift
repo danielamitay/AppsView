@@ -9,6 +9,7 @@ import SwiftUI
 
 internal struct LoadedView: View {
     let apps: [App]
+    let developerName: String?
 
     var body: some View {
         if apps.isEmpty {
@@ -19,13 +20,17 @@ internal struct LoadedView: View {
             List(apps, id: \.trackId) { app in
                 AppRow(app: app)
             }
-            .navigationTitle("Results")
+            .listStyle(.plain)
+            .navigationTitle(developerName ?? "Results")
         }
     }
 }
 
 #Preview {
     NavigationView {
-        LoadedView(apps: [])
+        LoadedView(apps: [
+            .iTrackMail,
+            .WifiCamera
+        ], developerName: "Daniel Amitay")
     }
 }
