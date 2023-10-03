@@ -7,11 +7,9 @@
 
 import SwiftUI
 
-struct AppsView: View {
-    var body: some View {
-        List {
-            Text("Hello World!")
-        }
+public struct AppsView: View {
+    public var body: some View {
+        LoadedView(apps: ["One", "Two", "Three"])
     }
 }
 
