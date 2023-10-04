@@ -68,6 +68,46 @@ private extension AppsView {
 
 #Preview {
     NavigationView {
-        AppsView(developerId: 356087517)
+        List {
+            // By Developer Id
+            Section("By Developer Id") {
+                ForEach([
+                    ("Daniel Amitay", 356087517),
+                    ("Apple", 284417353),
+                    ("Meta", 284882218),
+                    ("Google", 281956209),
+                ], id: \.0) { item in
+                    NavigationLink(item.0) {
+                        AppsView(developerId: item.1)
+                    }
+                }
+            }
+            // By App Ids
+            Section("By App Ids") {
+                ForEach([
+                    ("Social Apps", [447188370, 835599320, 333903271, 6446901002, 284882215, 389801252, 288429040, 310633997]),
+                    ("Slick Apps", [401626263, 363590051, 963034692, 498151501, 582790430, 493136154]),
+                    ("Cool Tech", [284993459, 383463868, 377342622, 489321253]),
+                ], id: \.0) { item in
+                    NavigationLink(item.0) {
+                        AppsView(appIds: item.1)
+                    }
+                }
+            }
+            // By Search Term
+            Section("By Search Term") {
+                ForEach([
+                    "Angry",
+                    "Sleep",
+                    "Radio"
+                ], id: \.self) { item in
+                    NavigationLink(item) {
+                        AppsView(searchTerm: item)
+                    }
+                }
+            }
+        }
+        .navigationTitle("AppsView")
+        .listStyle(.plain)
     }
 }
