@@ -13,7 +13,13 @@ let package = Package(
             targets: ["AppsView"]
         ),
     ],
+    dependencies: [
+        .package(url: "https://github.com/SwiftyJSON/SwiftyJSON.git", from: "5.0.0"),
+    ],
     targets: [
-        .target(name: "AppsView"),
+        .target(
+            name: "AppsView",
+            dependencies: ["SwiftyJSON"]
+        ),
     ]
 )
