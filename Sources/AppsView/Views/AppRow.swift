@@ -9,6 +9,7 @@ import SwiftUI
 
 internal struct AppRow: View {
     let app: App
+    let action: () -> Void
 
     var body: some View {
         HStack(spacing: 12) {
@@ -51,9 +52,7 @@ internal struct AppRow: View {
 
             Spacer()
 
-            Button(action: {
-                // TODO
-            }) {
+            Button(action: action) {
                 Text(app.formattedPrice?.uppercased() ?? "VIEW")
                     .frame(width: 72, height: 28)
                     .background(Color.init(uiColor: .init(white: 0.75, alpha: 0.2)))
@@ -68,8 +67,8 @@ internal struct AppRow: View {
 #Preview {
     NavigationView {
         List {
-            AppRow(app: .iTrackMail)
-            AppRow(app: .WifiCamera)
+            AppRow(app: .iTrackMail) {}
+            AppRow(app: .WifiCamera) {}
         }
         .navigationTitle("Apps")
         .listStyle(.plain)

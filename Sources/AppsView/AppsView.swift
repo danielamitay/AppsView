@@ -43,7 +43,9 @@ public struct AppsView: View {
                 fetchApps()
             }
         case let .loaded(apps, developerName):
-            LoadedView(apps: apps, developerName: developerName)
+            LoadedView(apps: apps, developerName: developerName) { app in
+                StoreModal.present(itunesId: app.trackId)
+            }
         }
     }
 }

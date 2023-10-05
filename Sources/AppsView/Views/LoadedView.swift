@@ -10,6 +10,7 @@ import SwiftUI
 internal struct LoadedView: View {
     let apps: [App]
     let developerName: String?
+    let action: (App) -> Void
 
     var body: some View {
         if apps.isEmpty {
@@ -18,7 +19,9 @@ internal struct LoadedView: View {
                 .navigationTitle("Results")
         } else {
             List(apps, id: \.trackId) { app in
-                AppRow(app: app)
+                AppRow(app: app) {
+                    action(app)
+                }
             }
             .listStyle(.plain)
             .navigationTitle(developerName ?? "Results")
@@ -31,6 +34,6 @@ internal struct LoadedView: View {
         LoadedView(apps: [
             .iTrackMail,
             .WifiCamera
-        ], developerName: "Daniel Amitay")
+        ], developerName: "Daniel Amitay") { _ in }
     }
 }
