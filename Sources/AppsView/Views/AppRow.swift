@@ -15,7 +15,7 @@ internal struct AppRow: View {
             ZStack {
                 Color.init(uiColor: .tertiarySystemGroupedBackground)
                     .cornerRadius(11)
-                AsyncImage(url: app.iconURL) { phase in
+                CachedAsyncImage(url: app.iconURL) { phase in
                     switch phase {
                     case .empty:
                         EmptyView()
