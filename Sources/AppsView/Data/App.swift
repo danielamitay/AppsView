@@ -11,6 +11,7 @@ import UIKit
 internal struct App {
     let trackId: Int
     let trackName: String
+    let kind: String
     let genres: [String]
     let artistId: Int?
     let bundleId: String?
@@ -29,6 +30,7 @@ extension App {
         self.init(
             trackId: software.trackId,
             trackName: software.trackName,
+            kind: software.kind,
             genres: software.genres,
             artistId: software.artistId,
             bundleId: software.bundleId,
@@ -46,6 +48,7 @@ extension App {
 // MARK: Helper methods
 extension App {
     var isCompatible: Bool {
+        guard kind == "software" else { return false }
         let systemVersion = UIDevice.current.systemVersion
         if let minimumOsVersion, minimumOsVersion.compare(systemVersion, options: .numeric) != .orderedDescending {
             if features?.contains(where: { feature in
@@ -92,6 +95,7 @@ extension App {
         self.init(
             trackId: trackId,
             trackName: trackName,
+            kind: "software",
             genres: genres,
             artistId: nil,
             bundleId: nil,

@@ -25,6 +25,7 @@ internal struct iTunesAPI {
     struct SoftwareDto: Decodable {
         let trackId: Int
         let trackName: String
+        let kind: String
         let artistId: Int
         let genres: [String]
         let bundleId: String

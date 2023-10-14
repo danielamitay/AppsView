@@ -11,6 +11,8 @@ public struct AppsView: View {
     private let request: iTunesAPI.Request
     @State private var state: LoadState = .unloaded
 
+    private var showIncompatibleApps = false
+
     private enum LoadState {
         case unloaded
         case loading
@@ -50,6 +52,15 @@ public struct AppsView: View {
     }
 }
 
+// MARK: Public modifiers
+extension AppsView {
+    func showsIncompatibleApps(_ showsIncompatible: Bool = true) -> AppsView {
+        var view = self
+        view.showIncompatibleApps = showsIncompatible
+        return view
+    }
+}
+
 // MARK: Internal logic
 private extension AppsView {
     func fetchApps() {
@@ -61,6 +72,8 @@ private extension AppsView {
             case let .success(softwares, artist):
                 let apps = softwares.compactMap { software in
                     App(software: software)
+                }.filter { app in
+                    return showIncompatibleApps || app.isCompatible
                 }
                 state = .loaded(apps: apps, developerName: artist?.artistName)
             }
