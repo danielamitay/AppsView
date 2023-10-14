@@ -47,6 +47,12 @@ extension App {
 
 // MARK: Helper methods
 extension App {
+    var isCurrentApp: Bool {
+        if let hostAppBundleId = Bundle.main.bundleIdentifier, let bundleId {
+            return hostAppBundleId == bundleId
+        }
+        return false
+    }
     var isCompatible: Bool {
         guard kind == "software" else { return false }
         let systemVersion = UIDevice.current.systemVersion

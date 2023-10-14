@@ -73,7 +73,7 @@ private extension AppsView {
                 let apps = softwares.compactMap { software in
                     App(software: software)
                 }.filter { app in
-                    return showIncompatibleApps || app.isCompatible
+                    return (showIncompatibleApps || app.isCompatible) && !app.isCurrentApp
                 }
                 state = .loaded(apps: apps, developerName: artist?.artistName)
             }
