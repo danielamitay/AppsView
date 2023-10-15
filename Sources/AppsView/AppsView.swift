@@ -12,6 +12,7 @@ public struct AppsView: View {
     @State private var state: LoadState = .unloaded
 
     private var showIncompatibleApps = false
+    private var loadedTitle: String? = nil
 
     private enum LoadState {
         case unloaded
@@ -45,7 +46,7 @@ public struct AppsView: View {
                 fetchApps()
             }
         case let .loaded(apps, developerName):
-            LoadedView(apps: apps, developerName: developerName) { app in
+            LoadedView(apps: apps, developerName: developerName, titleOverride: loadedTitle) { app in
                 StoreModal.present(itunesId: app.trackId)
             }
         }
@@ -57,6 +58,12 @@ extension AppsView {
     func showsIncompatibleApps(_ showsIncompatible: Bool = true) -> AppsView {
         var view = self
         view.showIncompatibleApps = showsIncompatible
+        return view
+    }
+
+    func loadedTitle(_ loadedTitle: String?) -> AppsView {
+        var view = self
+        view.loadedTitle = loadedTitle
         return view
     }
 }
@@ -106,6 +113,7 @@ private extension AppsView {
                 ], id: \.0) { item in
                     NavigationLink(item.0) {
                         AppsView(appIds: item.1)
+                            .loadedTitle(item.0)
                     }
                 }
             }
@@ -118,6 +126,7 @@ private extension AppsView {
                 ], id: \.self) { item in
                     NavigationLink(item) {
                         AppsView(searchTerm: item)
+                            .loadedTitle(item)
                     }
                 }
             }
