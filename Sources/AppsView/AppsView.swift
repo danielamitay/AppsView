@@ -46,7 +46,13 @@ public struct AppsView: View {
                 fetchApps()
             }
         case let .loaded(apps, developerName):
-            LoadedView(apps: apps, developerName: developerName, titleOverride: loadedTitle) { app in
+            LoadedView(
+                apps: apps,
+                navigationTitle: navigationTitle(
+                    developerName: developerName,
+                    titleOverride: loadedTitle
+                )
+            ) { app in
                 StoreModal.present(itunesId: app.trackId)
             }
         }
@@ -84,6 +90,20 @@ private extension AppsView {
                 }
                 state = .loaded(apps: apps, developerName: artist?.artistName)
             }
+        }
+    }
+
+    func navigationTitle(developerName: String?, titleOverride: String?) -> String? {
+        if let titleOverride {
+            return titleOverride
+        }
+        switch request {
+        case .developerId(_):
+            return developerName
+        case .appIds(_):
+            return nil
+        case .searchTerm(let term):
+            return term
         }
     }
 }
@@ -126,7 +146,6 @@ private extension AppsView {
                 ], id: \.self) { item in
                     NavigationLink(item) {
                         AppsView(searchTerm: item)
-                            .loadedTitle(item)
                     }
                 }
             }
