@@ -29,6 +29,7 @@ internal struct LoadedView: View {
     }
 }
 
+#if DEBUG
 #Preview {
     NavigationView {
         LoadedView(apps: [
@@ -37,3 +38,4 @@ internal struct LoadedView: View {
         ], navigationTitle: "Daniel Amitay") { _ in }
     }
 }
+#endif

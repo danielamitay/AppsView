@@ -64,6 +64,7 @@ internal struct AppRow: View {
     }
 }
 
+#if DEBUG
 #Preview {
     NavigationView {
         List {
@@ -74,3 +75,4 @@ internal struct AppRow: View {
         .listStyle(.plain)
     }
 }
+#endif
