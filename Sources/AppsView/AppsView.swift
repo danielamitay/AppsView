@@ -9,6 +9,7 @@ import SwiftUI
 
 public struct AppsView: View {
     private let request: iTunesAPI.Request
+    private let opened: ((_ appId: Int) -> Void)?
     @State private var state: LoadState = .unloaded
 
     private var showIncompatibleApps = false
@@ -21,16 +22,19 @@ public struct AppsView: View {
         case loaded(apps: [App], developerName: String?)
     }
 
-    public init(developerId id: Int) {
-        request = .developerId(id)
+    public init(developerId id: Int, opened: ((_ appId: Int) -> Void)? = nil) {
+        self.request = .developerId(id)
+        self.opened = opened
     }
 
-    public init(appIds ids: [Int]) {
-        request = .appIds(ids)
+    public init(appIds ids: [Int], opened: ((_ appId: Int) -> Void)? = nil) {
+        self.request = .appIds(ids)
+        self.opened = opened
     }
 
-    public init(searchTerm term: String) {
-        request = .searchTerm(term)
+    public init(searchTerm term: String, opened: ((_ appId: Int) -> Void)? = nil) {
+        self.request = .searchTerm(term)
+        self.opened = opened
     }
 
     public var body: some View {
@@ -54,6 +58,7 @@ public struct AppsView: View {
                 )
             ) { app in
                 StoreModal.present(itunesId: app.trackId)
+                opened?(app.trackId)
             }
         }
     }
