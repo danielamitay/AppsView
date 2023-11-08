@@ -12,8 +12,8 @@ public struct AppsView: View {
     private let opened: ((_ appId: Int) -> Void)?
     @State private var state: LoadState = .unloaded
 
-    private var showIncompatibleApps = false
-    private var loadedTitle: String? = nil
+    @Environment(\.showIncompatibleApps) var showIncompatibleApps
+    @Environment(\.loadedTitle) var loadedTitle
 
     private enum LoadState {
         case unloaded
@@ -65,17 +65,31 @@ public struct AppsView: View {
 }
 
 // MARK: Public modifiers
-extension AppsView {
-    func showsIncompatibleApps(_ showsIncompatible: Bool = true) -> AppsView {
-        var view = self
-        view.showIncompatibleApps = showsIncompatible
-        return view
+extension View {
+    func showsIncompatibleApps(_ showsIncompatible: Bool = true) -> some View {
+        environment(\.showIncompatibleApps, showsIncompatible)
     }
+    func loadedTitle(_ loadedTitle: String?) -> some View {
+        environment(\.loadedTitle, loadedTitle)
+    }
+}
 
-    func loadedTitle(_ loadedTitle: String?) -> AppsView {
-        var view = self
-        view.loadedTitle = loadedTitle
-        return view
+private struct ShowIncompatibleAppsKey: EnvironmentKey {
+    static let defaultValue = false
+}
+
+private struct LoadedTitleKey: EnvironmentKey {
+    static let defaultValue: String? = nil
+}
+
+private extension EnvironmentValues {
+    var showIncompatibleApps: Bool {
+        get { self[ShowIncompatibleAppsKey.self] }
+        set { self[ShowIncompatibleAppsKey.self] = newValue }
+    }
+    var loadedTitle: String? {
+        get { self[LoadedTitleKey.self] }
+        set { self[LoadedTitleKey.self] = newValue }
     }
 }
 
