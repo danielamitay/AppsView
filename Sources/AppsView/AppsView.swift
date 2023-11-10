@@ -9,11 +9,14 @@ import SwiftUI
 
 public struct AppsView: View {
     private let request: iTunesAPI.Request
+    private let options: AppsView.Options
     private let opened: ((_ appId: Int) -> Void)?
     @State private var state: LoadState = .unloaded
 
-    @Environment(\.showIncompatibleApps) var showIncompatibleApps
-    @Environment(\.loadedTitle) var loadedTitle
+    public struct Options {
+        var showIncompatibleApps: Bool = false
+        var loadedTitle: String? = nil
+    }
 
     private enum LoadState {
         case unloaded
@@ -22,18 +25,21 @@ public struct AppsView: View {
         case loaded(apps: [App], developerName: String?)
     }
 
-    public init(developerId id: Int, opened: ((_ appId: Int) -> Void)? = nil) {
+    public init(developerId id: Int, options: AppsView.Options? = nil, opened: ((_ appId: Int) -> Void)? = nil) {
         self.request = .developerId(id)
+        self.options = options ?? .init()
         self.opened = opened
     }
 
-    public init(appIds ids: [Int], opened: ((_ appId: Int) -> Void)? = nil) {
+    public init(appIds ids: [Int], options: AppsView.Options? = nil, opened: ((_ appId: Int) -> Void)? = nil) {
         self.request = .appIds(ids)
+        self.options = options ?? .init()
         self.opened = opened
     }
 
-    public init(searchTerm term: String, opened: ((_ appId: Int) -> Void)? = nil) {
+    public init(searchTerm term: String, options: AppsView.Options? = nil, opened: ((_ appId: Int) -> Void)? = nil) {
         self.request = .searchTerm(term)
+        self.options = options ?? .init()
         self.opened = opened
     }
 
@@ -52,44 +58,12 @@ public struct AppsView: View {
         case let .loaded(apps, developerName):
             LoadedView(
                 apps: apps,
-                navigationTitle: navigationTitle(
-                    developerName: developerName,
-                    titleOverride: loadedTitle
-                )
+                navigationTitle: navigationTitle(developerName: developerName)
             ) { app in
                 StoreModal.present(itunesId: app.trackId)
                 opened?(app.trackId)
             }
         }
-    }
-}
-
-// MARK: Public modifiers
-extension View {
-    func showsIncompatibleApps(_ showsIncompatible: Bool = true) -> some View {
-        environment(\.showIncompatibleApps, showsIncompatible)
-    }
-    func loadedTitle(_ loadedTitle: String?) -> some View {
-        environment(\.loadedTitle, loadedTitle)
-    }
-}
-
-private struct ShowIncompatibleAppsKey: EnvironmentKey {
-    static let defaultValue = false
-}
-
-private struct LoadedTitleKey: EnvironmentKey {
-    static let defaultValue: String? = nil
-}
-
-private extension EnvironmentValues {
-    var showIncompatibleApps: Bool {
-        get { self[ShowIncompatibleAppsKey.self] }
-        set { self[ShowIncompatibleAppsKey.self] = newValue }
-    }
-    var loadedTitle: String? {
-        get { self[LoadedTitleKey.self] }
-        set { self[LoadedTitleKey.self] = newValue }
     }
 }
 
@@ -105,15 +79,15 @@ private extension AppsView {
                 let apps = softwares.compactMap { software in
                     App(software: software)
                 }.filter { app in
-                    return (showIncompatibleApps || app.isCompatible) && !app.isCurrentApp
+                    return (options.showIncompatibleApps || app.isCompatible) && !app.isCurrentApp
                 }
                 state = .loaded(apps: apps, developerName: artist?.artistName)
             }
         }
     }
 
-    func navigationTitle(developerName: String?, titleOverride: String?) -> String? {
-        if let titleOverride {
+    func navigationTitle(developerName: String?) -> String? {
+        if let titleOverride = options.loadedTitle {
             return titleOverride
         }
         switch request {
@@ -151,8 +125,7 @@ private extension AppsView {
                     ("Cool Tech", [284993459, 383463868, 377342622, 489321253]),
                 ], id: \.0) { item in
                     NavigationLink(item.0) {
-                        AppsView(appIds: item.1)
-                            .loadedTitle(item.0)
+                        AppsView(appIds: item.1, options: .init(loadedTitle: item.0))
                     }
                 }
             }
