@@ -7,14 +7,19 @@
 
 import SwiftUI
 
+/// Displays apps from the App Store in a similar UI/UX
 public struct AppsView: View {
     private let request: iTunesAPI.Request
     private let options: AppsView.Options
     private let opened: ((_ appId: Int) -> Void)?
     @State private var state: LoadState = .unloaded
 
+    /// Overriding options for the `AppsView`
     public struct Options {
+        /// Whether or not the `AppsView` should show apps that are incompatible with the current device
         var showIncompatibleApps: Bool = false
+
+        /// An optional title to use as an override instead of "Results" in the loaded state
         var loadedTitle: String? = nil
     }
 
@@ -25,18 +30,27 @@ public struct AppsView: View {
         case loaded(apps: [App], developerName: String?)
     }
 
+    /// Returns an `AppsView` that shows apps for a given developer
+    /// @param developerId The iTunes artistId / developerId
+    /// @param options Override options, optional
     public init(developerId id: Int, options: AppsView.Options? = nil, opened: ((_ appId: Int) -> Void)? = nil) {
         self.request = .developerId(id)
         self.options = options ?? .init()
         self.opened = opened
     }
 
+    /// Returns an `AppsView` that shows a fixed list of apps
+    /// @param appIds The list of appIds
+    /// @param options Override options, optional
     public init(appIds ids: [Int], options: AppsView.Options? = nil, opened: ((_ appId: Int) -> Void)? = nil) {
         self.request = .appIds(ids)
         self.options = options ?? .init()
         self.opened = opened
     }
 
+    /// Returns an `AppsView` that shows apps for a given search term in the App Store
+    /// @param searchTerm The search term to use in the App Store
+    /// @param options Override options, optional
     public init(searchTerm term: String, options: AppsView.Options? = nil, opened: ((_ appId: Int) -> Void)? = nil) {
         self.request = .searchTerm(term)
         self.options = options ?? .init()
