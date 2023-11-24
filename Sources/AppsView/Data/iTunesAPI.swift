@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SwiftyJSON
 
 internal struct iTunesAPI {
     enum Request {
@@ -20,7 +19,24 @@ internal struct iTunesAPI {
     }
     struct ResultsDto: Decodable {
         let resultCount: Int
-        let results: [JSON]
+        let results: [ResultDto]
+    }
+    enum ResultDto: Decodable {
+        case software(SoftwareDto)
+        case artist(ArtistDto)
+        case unknown
+
+        init(from decoder: Decoder) throws {
+            if let software = try? SoftwareDto(from: decoder) {
+                self = .software(software)
+                return
+            }
+            if let artist = try? ArtistDto(from: decoder) {
+                self = .artist(artist)
+                return
+            }
+            self = .unknown
+        }
     }
     struct SoftwareDto: Decodable {
         let trackId: Int
@@ -70,12 +86,12 @@ extension iTunesAPI {
         let urlRequest = URLRequest(url: requestURL, cachePolicy: .returnCacheDataElseLoad, timeoutInterval: 20)
         URLSession.shared.dataTask(with: urlRequest) { data, response, error in
             if let data {
-                let resultsPair = flatDecode(data: data, type: ResultsDto.self)
-                if let resultsDto = resultsPair.0 {
+                do {
+                    let resultsDto = try JSONDecoder().decode(ResultsDto.self, from: data)
                     let finalResult = softwareAndArtistForResults(results: resultsDto)
                     safeCompletion(.success(finalResult.0, finalResult.1))
-                } else {
-                    safeCompletion(.error(resultsPair.1))
+                } catch {
+                    safeCompletion(.error(error))
                 }
             } else {
                 safeCompletion(.error(error))
@@ -99,27 +115,19 @@ private extension iTunesAPI {
         }
     }
 
-    static func flatDecode<T: Decodable>(data: Data, type: T.Type) -> (T?, Error?) {
-        var decodedObject: T?
-        var decodeError: Error?
-        do {
-            decodedObject = try JSONDecoder().decode(T.self, from: data)
-        } catch {
-            decodeError = error
-        }
-        return (decodedObject, decodeError)
-    }
-
     static func softwareAndArtistForResults(results: ResultsDto) -> ([SoftwareDto], ArtistDto?) {
-        var artist: ArtistDto?
-        var softwares = [SoftwareDto]()
+        var artist: ArtistDto? = nil
+        var softwares: [SoftwareDto] = []
         for result in results.results {
-            let data = try? result.rawData()
-            guard let data else { continue }
-            if let softwareDto = flatDecode(data: data, type: SoftwareDto.self).0 {
+            switch result {
+            case .software(let softwareDto):
                 softwares.append(softwareDto)
-            } else if artist == nil, let artistDto = flatDecode(data: data, type: ArtistDto.self).0 {
-                artist = artistDto
+            case .artist(let artistDto):
+                if artist == nil {
+                    artist = artistDto
+                }
+            case .unknown:
+                break
             }
         }
         return (softwares, artist)
