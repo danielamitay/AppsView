@@ -49,6 +49,7 @@ internal struct iTunesAPI {
         let screenshotUrls: [String]?
         let ipadScreenshotUrls: [String]?
         let features: [String]?
+        let supportedDevices: [String]?
         let minimumOsVersion: String?
         let artworkUrl100: String?
         let artworkUrl512: String?

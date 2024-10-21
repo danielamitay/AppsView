@@ -19,6 +19,7 @@ internal struct App {
     let screenshotUrls: [String]?
     let ipadScreenshotUrls: [String]?
     let features: [String]?
+    let supportedDevices: [String]?
     let minimumOsVersion: String?
     let artworkUrl100: String?
     let artworkUrl512: String?
@@ -38,6 +39,7 @@ extension App {
             screenshotUrls: software.screenshotUrls,
             ipadScreenshotUrls: software.ipadScreenshotUrls,
             features: software.features,
+            supportedDevices: software.supportedDevices,
             minimumOsVersion: software.minimumOsVersion,
             artworkUrl100: software.artworkUrl100,
             artworkUrl512: software.artworkUrl512
@@ -54,28 +56,37 @@ extension App {
         return false
     }
     var isCompatible: Bool {
+        // Make sure the app is actually software
         guard kind == "software" else { return false }
+
+        // Make sure the app is compatible with the current OS version
         let systemVersion = UIDevice.current.systemVersion
-        if let minimumOsVersion, minimumOsVersion.compare(systemVersion, options: .numeric) != .orderedDescending {
-            if features?.contains(where: { feature in
-                feature == "iosUniversal"
-            }) == true {
-                // App is universally compatible
-                return true
-            } else {
-                switch UIDevice.current.userInterfaceIdiom {
-                case .phone:
-                    // App is only compatible with iPhone if it contains screenshot urls
-                    return screenshotUrls?.count ?? 0 > 0
-                case .pad:
-                    // App is only compatible with iPad if it contains screenshot urls or ipad screenshot urls
-                    return screenshotUrls?.count ?? 0 > 0 || ipadScreenshotUrls?.count ?? 0 > 0
-                default:
-                    return false
-                }
-            }
+        if let minimumOsVersion, minimumOsVersion.compare(systemVersion, options: .numeric) == .orderedDescending {
+            return false
         }
-        return false
+
+        // If the features contain "iosUniversal", the app is universally compatible
+        if features?.contains(where: { $0 == "iosUniversal" }) == true {
+            // App is universally compatible
+            return true
+        }
+
+        // Perform device-specific compatibility checks
+        switch UIDevice.current.userInterfaceIdiom {
+        case .phone:
+            // App is only compatible with iPhone if it contains screenshot urls
+            // or there are more than 5 supported "iPhone" devices
+            let filteredDevices = supportedDevices?.filter { $0.lowercased().hasPrefix("iphone") }
+            return (screenshotUrls?.count ?? 0 > 0 || filteredDevices?.count ?? 0 > 5)
+        case .pad:
+            // App is only compatible with iPad if it contains screenshot urls or ipad screenshot urls
+            // or there are more than 5 supported "iPad" devices
+            let filteredDevices = supportedDevices?.filter { $0.lowercased().hasPrefix("ipad") }
+            return (screenshotUrls?.count ?? 0 > 0 || ipadScreenshotUrls?.count ?? 0 > 0 || filteredDevices?.count ?? 0 > 5)
+        default:
+            // App is not compatible with other device types
+            return false
+        }
     }
     var iconURL: URL? {
         if let artworkUrl512 {
@@ -109,6 +120,7 @@ extension App {
             screenshotUrls: nil,
             ipadScreenshotUrls: nil,
             features: nil,
+            supportedDevices: nil,
             minimumOsVersion: nil,
             artworkUrl100: nil,
             artworkUrl512: artworkUrl512
