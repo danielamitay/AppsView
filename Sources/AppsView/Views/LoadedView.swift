@@ -10,7 +10,12 @@ import SwiftUI
 internal struct LoadedView: View {
     let apps: [App]
     let navigationTitle: String?
-    let action: (App) -> Void
+    let action: (App, Action) -> Void
+
+    enum Action {
+        case view
+        case share
+    }
 
     var body: some View {
         if apps.isEmpty {
@@ -20,7 +25,21 @@ internal struct LoadedView: View {
         } else {
             List(apps, id: \.trackId) { app in
                 AppRow(app: app) {
-                    action(app)
+                    action(app, .view)
+                }
+                .contextMenu {
+                    Button {
+                        action(app, .view)
+                    } label: {
+                        Text("View")
+                        Image(systemName: "arrow.up.forward.app")
+                    }
+                    Button {
+                        action(app, .share)
+                    } label: {
+                        Text("Share")
+                        Image(systemName: "square.and.arrow.up")
+                    }
                 }
             }
             .listStyle(.plain)
@@ -35,7 +54,7 @@ internal struct LoadedView: View {
         LoadedView(apps: [
             .iTrackMail,
             .WifiCamera
-        ], navigationTitle: "Daniel Amitay") { _ in }
+        ], navigationTitle: "Daniel Amitay") { _, _ in }
     }
 }
 #endif

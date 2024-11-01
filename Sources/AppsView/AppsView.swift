@@ -7,12 +7,16 @@
 
 import SwiftUI
 
+import ActivityView
+
 /// Displays apps from the App Store in a similar UI/UX
 public struct AppsView: View {
     private let request: iTunesAPI.Request
     private let options: AppsView.Options
     private let opened: ((_ appId: Int) -> Void)?
     @State private var state: LoadState = .unloaded
+
+    @State private var activityItem: ActivityItem?
 
     /// Overriding options for the `AppsView`
     public struct Options {
@@ -73,10 +77,18 @@ public struct AppsView: View {
             LoadedView(
                 apps: apps,
                 navigationTitle: navigationTitle(developerName: developerName)
-            ) { app in
-                StoreModal.present(itunesId: app.trackId)
-                opened?(app.trackId)
+            ) { app, action in
+                switch action {
+                case .view:
+                    StoreModal.present(itunesId: app.trackId)
+                    opened?(app.trackId)
+                case .share:
+                    activityItem = ActivityItem(
+                        items: "https://apps.apple.com/us/app/id\(app.trackId)"
+                    )
+                }
             }
+            .activitySheet($activityItem)
         }
     }
 }

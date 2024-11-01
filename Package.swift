@@ -13,11 +13,15 @@ let package = Package(
             targets: ["AppsView"]
         ),
     ],
-    dependencies: [],
+    dependencies: [
+        .package(url: "https://github.com/SwiftUI-Plus/ActivityView", .upToNextMajor(from: "1.2.0")),
+    ],
     targets: [
         .target(
             name: "AppsView",
-            dependencies: []
+            dependencies: [
+                .product(name: "ActivityView", package: "ActivityView"),
+            ]
         ),
     ]
 )
