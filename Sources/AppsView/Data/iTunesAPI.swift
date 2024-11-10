@@ -84,7 +84,7 @@ extension iTunesAPI {
             safeCompletion(.error(nil))
             return
         }
-        let urlRequest = URLRequest(url: requestURL, cachePolicy: .returnCacheDataElseLoad, timeoutInterval: 20)
+        let urlRequest = URLRequest(url: requestURL, timeoutInterval: 30)
         URLSession.shared.dataTask(with: urlRequest) { data, response, error in
             if let data {
                 do {
